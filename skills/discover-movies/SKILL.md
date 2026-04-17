@@ -29,12 +29,13 @@ You are surfacing a feed of notable movies. Two data sources are wired in — ro
 
 1. Decide the route. Call the chosen tool.
 2. **Filter against user taste** (always). Call `preferences_get` in parallel. Drop results whose genres intersect `dislikedGenres`. Flag entries already in `watched_list` as `[seen]` — don't remove them.
-3. **Present 5–8 picks** in a readable format. When the data came from `movies_imdb_discover`, surface IMDb rating and vote count:
-   - Title (Year) — IMDb 8.2 (1.4M votes)
+3. **Present 5–8 picks** in a readable format. Default to IMDb rating — it's the score users trust:
+   - Title (Year) — IMDb 8.2 (1.4M votes when from `movies_imdb_discover`)
    - One-sentence hook from plot
    - Genres / interest tags
    - `[seen]` marker if already watched
-   When the data came from TMDB, surface TMDB rating.
+
+   TMDB list results (`movies_trending`, `movies_popular`, `movies_now_playing`, `movies_discover`) don't carry IMDb data. Options: (a) for the top 3–5 picks only, call `movies_details` to get `imdbId` + merged IMDb rating — best when the list is short; (b) display `TMDB 7.9` as a fallback when an IMDb-rated route isn't practical. Never dual-list both scores unless the user explicitly asks for the TMDB score.
 4. **Offer follow-ups.** "Want trailer / full details?" → `movies_details` (TMDB, merges IMDb signal). "Add to watchlist?" → `watchlist_add`.
 
 ## Worked examples

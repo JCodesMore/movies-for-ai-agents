@@ -52,13 +52,13 @@ Call these three MCP tools in parallel before anything else:
 Format each pick as:
 
 ```
-🎬 **Title** (Year) — IMDb 8.2 · TMDB 7.9 — 128 min
+🎬 **Title** (Year) — IMDb 8.2 — 128 min
 [Genre, Genre] · [Heist, Neo-Noir] (if interest tags present)
 One-to-two sentence hook from the overview.
 → Why for you: [specific reason anchored to their profile or the current ask]
 ```
 
-When IMDb data isn't available, fall back to TMDB rating only — don't leave a placeholder.
+**Default to IMDb rating only.** Only surface TMDB rating when (a) IMDb data isn't available — use `TMDB 7.9` as a quiet fallback — or (b) the user explicitly asks to see the TMDB score. Don't dual-list ratings by default; it's noise.
 
 Close with a soft prompt: *"Want a trailer for any of these? Or add one to your watchlist?"*
 
