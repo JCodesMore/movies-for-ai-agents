@@ -2,6 +2,12 @@
 
 All notable changes to **claude-for-movies** are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] — 2026-04-17
+
+### Fixed
+- `recommend` skill was rendering bare TMDB URLs (`themoviedb.org/movie/...`) and `TMDB X.X` ratings instead of the intended IMDb hyperlinks and IMDb ratings. Two compounding causes: (1) the per-strategy enrichment step pointed at `movies_imdb_batch_rating`, which can't backfill `imdbId` from a TMDB ID — so picks reached the renderer with no IMDb data; (2) the format spec only authorized "plain bold" as a fallback but didn't explicitly forbid TMDB URLs, leaving room for the model to invent one. Strategies A, C, D now require per-pick `movies_details({ movieId })` (which hydrates `imdbId` + IMDb rating in one round-trip), and the format contract explicitly forbids any `themoviedb.org/...` URL in user-facing output — plain bold `**Title**` is the only acceptable degraded state.
+- `discover-movies` and `find-movie` had the same latent risk; tightened the format contract symmetrically.
+
 ## [0.2.0] — 2026-04-17
 
 ### Added

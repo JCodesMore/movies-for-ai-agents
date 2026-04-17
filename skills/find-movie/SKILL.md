@@ -24,7 +24,7 @@ You are helping the user locate a specific movie. Primary source is TMDB (fuzzy 
    One-sentence hook.
    ```
 
-   Fallback when `imdbId` is absent (e.g., a fresh search hit without enrichment): plain `**Title**`, no link. Show `TMDB 7.9` only when IMDb rating is missing.
+   When `imdbId` is absent on a search hit, call `movies_details({ movieId })` to hydrate it before rendering. If `movies_details` still returns `imdbId: null`, fall back to plain `**Title**` (no link). Show `TMDB 7.9` only when IMDb rating is missing after that hydration step. **❌ Never use a TMDB URL** as a fallback — plain bold is the only acceptable degraded state.
 
 4. **If a single result is obviously the match**, skip the list and go to step 5.
 

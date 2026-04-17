@@ -39,9 +39,9 @@ Call these three MCP tools in parallel before anything else:
 ### A. "Something like [seed movie]"
 1. `movies_search({ query })` → resolve seed to a TMDB ID. Confirm match if ambiguous.
 2. `movies_recommendations({ movieId })` — TMDB's ML similar-movies. imdbapi.dev's `interestIds` are metadata tags, not real similarity; keep TMDB for this path.
-3. Filter out movies already in `watched_list`. Filter out `dislikedGenres`.
-4. Collect the `imdbId`s of the top 5–8 candidates (from `movies_details` or TMDB's included field) and call `movies_imdb_batch_rating({ imdbIds })` so each pick carries an IMDb rating.
-5. Pick top 3–5. For each, write a one-sentence "why it fits" anchored to either the seed or their taste profile. Surface IMDb rating when available.
+3. Filter out movies already in `watched_list`. Filter out `dislikedGenres`. Pick the top 3–5.
+4. **For each final pick, call `movies_details({ movieId })`** — this hydrates `imdbId`, IMDb rating, vote count, Metascore, and interest tags in one call. The link and rating fields in the output template depend on this. (TMDB's recommendations endpoint does NOT include `imdb_id` in list results — `movies_details` is the only path.)
+5. Write a one-sentence "why it fits" per pick, anchored to either the seed or their taste profile.
 
 ### B. Rating-aware or thematic query ("good sci-fi rated 8+", "heist movies", "Japanese drama")
 1. Route to `movies_imdb_discover`:
@@ -60,12 +60,15 @@ Call these three MCP tools in parallel before anything else:
    - `minRating: 6.5` and `minVotes: 300` by default (quality floor). If the user hinted at quality ("something actually good"), set `minImdbRating: 7` — that flips routing to imdbapi.dev automatically.
    - Runtime filters when they mention a time budget
    - `sortBy: "popularity.desc"` unless they want something obscure
-3. Filter out watched. Pick 3–5 with brief "why it fits" reasoning.
+3. Filter out watched. Pick 3–5.
+4. **For each final pick, call `movies_details({ movieId })`** — hydrates `imdbId` + IMDb rating needed for the output template. Skip this and the format below cannot render correctly.
+5. Write brief "why it fits" reasoning per pick.
 
 ### D. "What should I watch tonight" (no constraint given)
 1. Combine signals: mix top 2–3 from `movies_trending` (week) with 1–2 from `movies_discover` using `likedGenres` and `favoriteDirectors`, and 1 from `movies_imdb_discover` using `likedInterests` when present.
 2. Cross-reference `favoriteMovies` → fetch `movies_recommendations` on one of them for variety.
-3. De-duplicate, filter watched, pick 3–5. Batch-enrich with IMDb ratings via `movies_imdb_batch_rating`.
+3. De-duplicate, filter watched, pick 3–5.
+4. **For each final pick, call `movies_details({ movieId })`** — hydrates `imdbId`, IMDb rating, vote count, Metascore, and interest tags. The picks coming from `movies_imdb_discover` already have an `imdbId`, but TMDB-sourced picks do NOT — call `movies_details` on those before rendering. (Note: `movies_imdb_batch_rating` only fetches ratings for known imdbIds; it can't backfill imdbIds from TMDB IDs, so it's not the right tool here.)
 
 ## Present the recommendations
 
@@ -78,9 +81,10 @@ One-to-two sentence hook from the overview.
 → Why for you: [specific reason anchored to their profile or the current ask]
 ```
 
-**Hyperlink rule.** Bold + IMDb link is the default. The 0.1.2+ enrichment routes top picks through `movies_details` (which hydrates `imdbId`), so links are reliably available. Fallback when `imdbId` is missing: plain bold, no link → `**Title**`.
-
-**Rating rule.** Default to IMDb rating only. If IMDb is absent, fall back to `TMDB 7.9`. Never dual-list (`IMDb X · TMDB Y`) unless the user explicitly asks to see the TMDB score.
+**Output contract (non-negotiable).**
+- **Title format:** `**[Title](https://www.imdb.com/title/{imdbId}/)**` — bold + IMDb link. The `imdbId` comes from `movies_details({ movieId })`, which every strategy above requires per pick. If `movies_details` returned `imdbId: null` after that call, fall back to plain bold `**Title**` with no link.
+- **❌ Never use a TMDB URL** (`themoviedb.org/movie/...`, `themoviedb.org/title/...`) anywhere in the output. The TMDB ID is internal plumbing — users don't read it. Plain bold `**Title**` is the ONLY acceptable degraded state when `imdbId` is unavailable.
+- **Rating:** IMDb rating only (`IMDb 8.2`). If `movies_details` returned no IMDb rating after hydration, fall back to `TMDB 7.9`. Never dual-list (`IMDb X · TMDB Y`) unless the user explicitly asks to see both scores.
 
 Close with: *"Pick one to start? I'll mark it active so we can check in next time."*
 
