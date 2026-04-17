@@ -24,7 +24,10 @@ const DEFAULT_PREFERENCES = {
   avoidKeywords: [],
   decadePrefs: { from: null, to: null },
   runtimePrefs: { minMin: null, maxMin: null },
-  moodDefaults: []
+  moodDefaults: [],
+  likedInterests: [],
+  likedCountries: [],
+  likedLanguages: []
 };
 
 export async function getPreferences() {

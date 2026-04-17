@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/discord/1400896964597383279?label=discord&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
 [![More plugins](https://img.shields.io/badge/more%20plugins-jcodesmore--plugins-black)](https://github.com/JCodesMore/jcodesmore-plugins)
 
-> Your personal movie concierge, built into Claude Code. Powered by [TMDB](https://www.themoviedb.org/).
+> Your personal movie concierge, built into Claude Code. Powered by [TMDB](https://www.themoviedb.org/) — and, for IMDb ratings + richer discovery filters, [imdbapi.dev](https://api.imdbapi.dev) (no extra key needed).
 
 Ask Claude *"what should I watch tonight?"* — it already knows what you've seen, remembers what you've loved, and picks accordingly. Mention a film in passing and it quietly logs it and learns your taste. Your profile follows you across every project, every machine.
 
@@ -48,6 +48,10 @@ Talk to Claude like a friend:
 - *"Find me that 90s movie about a hacker..."*
 - *"I just finished Arrival, absolutely loved it."* — Claude silently logs it and learns your taste
 - *"Something cerebral, under two hours."*
+- *"Sci-fi with an IMDb rating of 8 or higher from the 2010s."*
+- *"Best heist movies of all time."*
+- *"Christopher Nolan's filmography."*
+- *"Hidden gems — highly rated but obscure."*
 
 The more you mention what you watch, the better the recommendations get.
 
@@ -63,7 +67,7 @@ Five skills that activate automatically based on what you say:
 | `recommend` | ask *"what should I watch?"* or describe a mood |
 | `movies-journal` | mention watching / finishing / loving / hating a movie — auto-logs it |
 
-Behind them, **18 MCP tools** expose TMDB search, recommendations, details, and your local state. Type `/mcp` inside Claude Code to inspect them live.
+Behind them, **24 MCP tools** expose TMDB search / recommendations / details, imdbapi.dev rating-aware discovery / interest filters / person lookup / awards / box office, and your local state. Type `/mcp` inside Claude Code to inspect them live.
 
 ## Where your data lives
 
@@ -71,10 +75,12 @@ Everything stays on **your machine**, outside any one project folder:
 
 ```
 ~/.claude/data/claude-for-movies/
-├── config.json        ← your TMDB API key (permissions 600)
-├── preferences.json   ← your taste profile (liked genres, directors, etc.)
-├── watched.json       ← what you've seen
-└── watchlist.json     ← what you're saving for later
+├── config.json           ← your TMDB API key (permissions 600)
+├── preferences.json      ← your taste profile (liked genres, directors, interests, etc.)
+├── watched.json          ← what you've seen
+├── watchlist.json        ← what you're saving for later
+├── imdb-cache.json       ← cached imdbapi.dev responses (24h/6h TTLs)
+└── imdb-interests.json   ← cached IMDb interest taxonomy (7d TTL)
 ```
 
 Your taste follows you across every project and every machine that shares this directory. No telemetry, no analytics — nothing leaves your machine except TMDB search queries.
@@ -125,7 +131,8 @@ The environment variable takes precedence over `config.json` when both are set.
 
 - [moviedb-promise](https://github.com/grantholle/moviedb-promise) — TMDB client
 - [Model Context Protocol SDK](https://github.com/modelcontextprotocol/sdk) — tool exposure to Claude
-- [TMDB](https://www.themoviedb.org/) — movie data
+- [TMDB](https://www.themoviedb.org/) — fuzzy search, trending, now-playing, ML recommendations, watch providers
+- [imdbapi.dev](https://api.imdbapi.dev) — IMDb ratings, Metascore, interest taxonomy, rating-aware discovery, awards, box office (no key required)
 
 ## License
 

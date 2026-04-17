@@ -9,7 +9,9 @@ export const paths = {
   config: path.join(DATA_DIR, 'config.json'),
   preferences: path.join(DATA_DIR, 'preferences.json'),
   watched: path.join(DATA_DIR, 'watched.json'),
-  watchlist: path.join(DATA_DIR, 'watchlist.json')
+  watchlist: path.join(DATA_DIR, 'watchlist.json'),
+  imdbCache: path.join(DATA_DIR, 'imdb-cache.json'),
+  interestsCache: path.join(DATA_DIR, 'imdb-interests.json')
 };
 
 export async function ensureDataDir() {

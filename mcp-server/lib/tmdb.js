@@ -26,9 +26,9 @@ function imageUrl(cfg, path, size) {
   return path ? `${cfg.secure_base_url}${size}${path}` : null;
 }
 
-export async function hydrateMovie(movie) {
+export async function hydrateMovie(movie, imdbPartial) {
   const cfg = await getImageConfig();
-  return {
+  const base = {
     id: movie.id,
     title: movie.title ?? movie.name,
     originalTitle: movie.original_title ?? movie.original_name,
@@ -45,10 +45,18 @@ export async function hydrateMovie(movie) {
     backdropUrl: imageUrl(cfg, movie.backdrop_path, 'w1280'),
     tmdbUrl: `https://www.themoviedb.org/movie/${movie.id}`
   };
+  if (imdbPartial) {
+    if (imdbPartial.imdbRating != null) base.imdbRating = imdbPartial.imdbRating;
+    if (imdbPartial.imdbVotes != null) base.imdbVotes = imdbPartial.imdbVotes;
+    if (imdbPartial.metascore != null) base.metascore = imdbPartial.metascore;
+    if (imdbPartial.interestTags?.length) base.imdbInterestTags = imdbPartial.interestTags;
+    if (imdbPartial.imdbId) base.imdbId = imdbPartial.imdbId;
+  }
+  return base;
 }
 
 export async function hydrateList(movies) {
-  return Promise.all((movies ?? []).map(hydrateMovie));
+  return Promise.all((movies ?? []).map(m => hydrateMovie(m)));
 }
 
 export function getGenreCache() { return cached?.genres ?? null; }

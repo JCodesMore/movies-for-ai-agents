@@ -11,7 +11,7 @@ You are setting up the `claude-for-movies` plugin for the user. This is a one-ti
 
 1. **Check current status.** Call the `config_status` MCP tool. If `configured: true`, tell the user it's already set up, show the summary, and ask if they want to re-prime their taste profile. Otherwise proceed.
 
-2. **Explain briefly** (1–2 sentences) what the plugin does and that a free [TMDB API key](https://www.themoviedb.org/settings/api) is required. Link the URL.
+2. **Explain briefly** (1–2 sentences) what the plugin does and that a free [TMDB API key](https://www.themoviedb.org/settings/api) is required. Link the URL. Mention that IMDb ratings and richer discovery filters come from imdbapi.dev automatically — no extra key needed.
 
 3. **Ask for the TMDB API key.** Accept either a TMDB v3 API key or a v4 read access token. When the user provides it, call `config_set_api_key` with `apiKey`. The tool performs a live smoke-test — if it errors, surface the error and ask them to retry.
 

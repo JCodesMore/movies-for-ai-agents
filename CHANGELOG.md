@@ -4,6 +4,29 @@ All notable changes to **claude-for-movies** are documented here. The format fol
 
 ## [Unreleased]
 
+### Added
+- Hybrid data source: TMDB + [imdbapi.dev](https://api.imdbapi.dev) (no extra key required).
+- Six new MCP tools powered by imdbapi.dev:
+  - `movies_imdb_discover` — IMDb-rating-aware discovery with `minAggregateRating`, `maxVoteCount`, `interestIds`, `nameIds`, `countryCodes`, `languageCodes`, and IMDb-native sort orders.
+  - `movies_imdb_search` — exact-title search that returns IMDb IDs natively.
+  - `movies_imdb_details` — IMDb title details with optional sub-resources: `credits`, `videos`, `awards`, `boxOffice`, `parentsGuide`, `certificates`, `releaseDates`, `akas`.
+  - `movies_imdb_batch_rating` — batched IMDb rating fetch (internally chunked to 5 per call).
+  - `movies_imdb_find_name` — resolves a person name to candidate IMDb nameIds (searches titles + walks credits).
+  - `movies_imdb_interests` — full IMDb interest taxonomy (~162 granular themes like Heist, Time Travel, Space Opera), cached locally for 7 days.
+- `movies_details` now automatically enriches TMDB data with IMDb rating, vote count, Metascore, and interest tags.
+- `movies_discover` accepts an optional `minImdbRating` that routes the query to imdbapi.dev for IMDb-rating-aware filtering.
+- Preferences schema extended (backward-compatible) with optional `likedInterests`, `likedCountries`, `likedLanguages`.
+- Reference docs at `docs/api-reference/imdbapi-dev.md` and `docs/api-reference/tmdb.md` for skills to consult when crafting fresh query patterns.
+- Disk-backed response cache (`~/.claude/data/claude-for-movies/imdb-cache.json`) with 24h / 6h / 7d TTLs and 5 MB soft cap.
+- `IMDB_DISABLE=1` env var to force imdbapi.dev offline if needed.
+
+### Changed
+- `movies_details` and `movies_discover` enriched in a non-breaking way — existing callers keep working.
+- Skill guidance (`discover-movies`, `find-movie`, `recommend`, `movies-journal`, `setup`) updated to route between TMDB and imdbapi.dev per intent.
+
+### Fixed
+- Graceful fallback: any imdbapi.dev failure (timeout, non-2xx, network) is swallowed and logged to stderr; TMDB-only data is returned so the plugin never hard-fails if imdbapi.dev is down.
+
 ## [0.1.0] — 2026-04-17
 
 ### Added

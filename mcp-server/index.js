@@ -12,10 +12,11 @@ import {
 } from './lib/state.js';
 import { setConfig, getApiKey } from './lib/config.js';
 import { paths } from './lib/paths.js';
+import * as imdb from './lib/imdb.js';
 
 const server = new McpServer({
   name: 'claude-for-movies',
-  version: '0.1.0'
+  version: '0.2.0'
 });
 
 const asJson = (obj) => ({
@@ -30,6 +31,15 @@ const asError = (err) => ({
 const safe = async (fn) => {
   try { return await fn(); } catch (err) { return asError(err); }
 };
+
+async function tryImdb(fn, fallback = null) {
+  try {
+    return await fn();
+  } catch (err) {
+    process.stderr.write(`[claude-for-movies] imdbapi.dev enrichment skipped: ${err.message}\n`);
+    return fallback;
+  }
+}
 
 // ---------- TMDB-facing tools ----------
 
@@ -61,13 +71,14 @@ server.registerTool(
   'movies_discover',
   {
     title: 'Discover movies by filters',
-    description: 'Filter-based movie discovery: genres, release-year range, rating floor, runtime bounds, sort order. Great for mood/constraint queries like "a 2020s thriller under 2 hours with rating >= 7".',
+    description: 'Filter-based movie discovery: genres, release-year range, rating floor, runtime bounds, sort order. Great for mood/constraint queries like "a 2020s thriller under 2 hours with rating >= 7". If `minImdbRating` is supplied the query is routed to imdbapi.dev for IMDb-rating-aware discovery.',
     inputSchema: {
       genres: z.array(z.union([z.string(), z.number()])).optional().describe('Genre names or TMDB genre IDs (e.g., ["Thriller","Science Fiction"])'),
       excludeGenres: z.array(z.union([z.string(), z.number()])).optional(),
       yearFrom: z.number().int().optional().describe('Release year >= this'),
       yearTo: z.number().int().optional().describe('Release year <= this'),
-      minRating: z.number().optional().describe('vote_average.gte (0-10)'),
+      minRating: z.number().optional().describe('TMDB vote_average.gte (0-10)'),
+      minImdbRating: z.number().optional().describe('IMDb aggregate rating floor (0-10). When set, routes via imdbapi.dev.'),
       minVotes: z.number().int().optional().describe('vote_count.gte (trust floor, e.g. 100)'),
       maxRuntime: z.number().int().optional().describe('with_runtime.lte (minutes)'),
       minRuntime: z.number().int().optional().describe('with_runtime.gte (minutes)'),
@@ -82,6 +93,27 @@ server.registerTool(
     }
   },
   (args) => safe(async () => {
+    if (args.minImdbRating != null) {
+      const genreNames = (args.genres ?? []).filter(g => typeof g === 'string');
+      const result = await imdb.listTitles({
+        types: ['MOVIE'],
+        genres: genreNames.length ? genreNames : undefined,
+        startYear: args.yearFrom,
+        endYear: args.yearTo,
+        minAggregateRating: args.minImdbRating,
+        minVoteCount: args.minVotes,
+        languageCodes: args.originalLanguage ? [args.originalLanguage] : undefined,
+        sortBy: 'SORT_BY_USER_RATING',
+        sortOrder: 'DESC',
+        limit: 20
+      });
+      return asJson({
+        source: 'imdbapi.dev',
+        filtersApplied: { ...args },
+        results: result.titles,
+        nextPageToken: result.nextPageToken
+      });
+    }
     const client = await getClient();
     const params = {};
     if (args.genres?.length) params.with_genres = (await resolveGenreIds(args.genres)).join(',');
@@ -97,6 +129,7 @@ server.registerTool(
     if (args.page) params.page = args.page;
     const result = await client.discoverMovie(params);
     return asJson({
+      source: 'tmdb',
       filtersApplied: params,
       page: result.page,
       totalPages: result.total_pages,
@@ -175,21 +208,33 @@ server.registerTool(
   'movies_details',
   {
     title: 'Full movie details',
-    description: 'Full details for a single movie: runtime, genres, tagline, cast (when append=credits), trailers (videos), release dates, streaming providers.',
+    description: 'Full details for a single movie: runtime, genres, tagline, cast (when append=credits), trailers (videos), release dates, streaming providers. When the TMDB record has an IMDb ID, imdbapi.dev data (imdbRating, imdbVotes, metascore, imdbInterestTags) is merged automatically.',
     inputSchema: {
       movieId: z.number().int().describe('TMDB movie ID'),
       append: z.array(z.enum([
         'credits','keywords','videos','release_dates','similar','recommendations','reviews','watch/providers'
-      ])).optional().describe('Extra data to attach')
+      ])).optional().describe('Extra TMDB data to attach'),
+      includeAwards: z.boolean().optional().describe('Also attach awardNominations from imdbapi.dev (slower)')
     }
   },
-  ({ movieId, append }) => safe(async () => {
+  ({ movieId, append, includeAwards }) => safe(async () => {
     const client = await getClient();
     const details = await client.movieInfo({
       id: movieId,
       append_to_response: append?.join(',')
     });
-    const hydrated = await hydrateMovie(details);
+    const imdbId = details.imdb_id ?? null;
+    const imdbData = imdbId ? await tryImdb(() => imdb.getTitle(imdbId)) : null;
+    const hydrated = await hydrateMovie(details, imdbData ? {
+      imdbId,
+      imdbRating: imdbData.imdbRating,
+      imdbVotes: imdbData.imdbVotes,
+      metascore: imdbData.metascore,
+      interestTags: imdbData.interestTags
+    } : null);
+    const awards = (imdbId && includeAwards)
+      ? await tryImdb(() => imdb.getAwards(imdbId, { pageSize: 20 }))
+      : null;
     return asJson({
       ...hydrated,
       tagline: details.tagline,
@@ -203,7 +248,8 @@ server.registerTool(
       ...(details.keywords && { keywords: details.keywords }),
       ...(details.videos && { videos: details.videos }),
       ...(details.release_dates && { releaseDates: details.release_dates }),
-      ...(details['watch/providers'] && { watchProviders: details['watch/providers'] })
+      ...(details['watch/providers'] && { watchProviders: details['watch/providers'] }),
+      ...(awards && { awards })
     });
   })
 );
@@ -216,6 +262,146 @@ server.registerTool(
     inputSchema: {}
   },
   () => safe(async () => asJson({ genres: await getGenres() }))
+);
+
+// ---------- imdbapi.dev-facing tools ----------
+
+server.registerTool(
+  'movies_imdb_discover',
+  {
+    title: 'Discover movies via IMDb (rating-aware)',
+    description: 'Canonical IMDb-rating-aware discovery against imdbapi.dev. Supports minAggregateRating, vote-count bands, interestIds (Heist, Time Travel, Space Opera, etc.), nameIds (director/actor filter), country/language filters, year range, and SORT_BY_USER_RATING / POPULARITY / RELEASE_DATE / YEAR / USER_RATING_COUNT. Prefer this over `movies_discover` whenever the user asks for an IMDb rating threshold, a filmography, a thematic subgenre, or hidden gems.',
+    inputSchema: {
+      types: z.array(z.enum(['MOVIE','TV_SERIES','TV_MINI_SERIES','TV_SPECIAL','TV_MOVIE','SHORT','VIDEO','VIDEO_GAME'])).optional(),
+      genres: z.array(z.string()).optional().describe('IMDb genre names, e.g. ["Sci-Fi","Drama"]'),
+      countryCodes: z.array(z.string()).optional().describe('ISO 3166-1 alpha-2, e.g. ["US","KR"]'),
+      languageCodes: z.array(z.string()).optional().describe('ISO 639-1/2, e.g. ["ja","es"]'),
+      nameIds: z.array(z.string()).optional().describe('IMDb person IDs (nm...)'),
+      interestIds: z.array(z.string()).optional().describe('IMDb interest IDs (in...) for granular themes'),
+      startYear: z.number().int().optional(),
+      endYear: z.number().int().optional(),
+      minVoteCount: z.number().int().optional(),
+      maxVoteCount: z.number().int().optional(),
+      minAggregateRating: z.number().optional().describe('0.0-10.0 IMDb rating floor'),
+      maxAggregateRating: z.number().optional(),
+      sortBy: z.enum([
+        'SORT_BY_POPULARITY','SORT_BY_RELEASE_DATE','SORT_BY_USER_RATING',
+        'SORT_BY_USER_RATING_COUNT','SORT_BY_YEAR'
+      ]).optional(),
+      sortOrder: z.enum(['ASC','DESC']).optional(),
+      limit: z.number().int().min(1).max(50).optional(),
+      pageToken: z.string().optional()
+    }
+  },
+  (args) => safe(async () => {
+    const result = await imdb.listTitles({
+      types: args.types ?? ['MOVIE'],
+      ...args
+    });
+    return asJson({
+      source: 'imdbapi.dev',
+      filtersApplied: args,
+      count: result.titles.length,
+      results: result.titles,
+      nextPageToken: result.nextPageToken
+    });
+  })
+);
+
+server.registerTool(
+  'movies_imdb_search',
+  {
+    title: 'Search titles via IMDb',
+    description: 'Exact/close title search against imdbapi.dev. Returns IMDb IDs natively. Prefer TMDB `movies_search` for fuzzy descriptions; use this when you need an IMDb ID to branch into other imdbapi.dev flows.',
+    inputSchema: {
+      query: z.string(),
+      limit: z.number().int().min(1).max(50).optional()
+    }
+  },
+  ({ query, limit }) => safe(async () => {
+    const results = await imdb.searchTitles(query, limit ?? 10);
+    return asJson({ source: 'imdbapi.dev', count: results.length, results });
+  })
+);
+
+server.registerTool(
+  'movies_imdb_details',
+  {
+    title: 'IMDb title details + optional sub-resources',
+    description: 'Full title record from imdbapi.dev with selectable sub-resources. Includes IMDb rating, metascore, interest tags, directors/writers/stars, countries, languages. Use `include` to pull credits, videos, awards, boxOffice, parentsGuide, certificates, releaseDates, or akas.',
+    inputSchema: {
+      imdbId: z.string().describe('IMDb title ID (tt...)'),
+      include: z.array(z.enum([
+        'credits','videos','awards','boxOffice','parentsGuide','certificates','releaseDates','akas'
+      ])).optional()
+    }
+  },
+  ({ imdbId, include }) => safe(async () => {
+    const base = await imdb.getTitle(imdbId);
+    const out = { ...base };
+    if (!include?.length) return asJson(out);
+    const jobs = [];
+    if (include.includes('credits')) jobs.push(['credits', imdb.getCredits(imdbId, { pageSize: 50 })]);
+    if (include.includes('videos')) jobs.push(['videos', imdb.getVideos(imdbId, { pageSize: 20 })]);
+    if (include.includes('awards')) jobs.push(['awards', imdb.getAwards(imdbId, { pageSize: 25 })]);
+    if (include.includes('boxOffice')) jobs.push(['boxOffice', imdb.getBoxOffice(imdbId)]);
+    if (include.includes('parentsGuide')) jobs.push(['parentsGuide', imdb.getParentsGuide(imdbId)]);
+    if (include.includes('certificates')) jobs.push(['certificates', imdb.getCertificates(imdbId)]);
+    if (include.includes('releaseDates')) jobs.push(['releaseDates', imdb.getReleaseDates(imdbId, { pageSize: 25 })]);
+    if (include.includes('akas')) jobs.push(['akas', imdb.getAkas(imdbId)]);
+    const settled = await Promise.allSettled(jobs.map(([, p]) => p));
+    settled.forEach((outcome, i) => {
+      const [key] = jobs[i];
+      if (outcome.status === 'fulfilled') out[key] = outcome.value;
+      else out[`${key}Error`] = outcome.reason?.message ?? String(outcome.reason);
+    });
+    return asJson(out);
+  })
+);
+
+server.registerTool(
+  'movies_imdb_batch_rating',
+  {
+    title: 'Batch IMDb ratings',
+    description: 'Fetch IMDb rating, vote count, metascore, and interest tags for up to 50 IMDb IDs. Internally chunks to 5 per API call. Handy after a TMDB recommendations call to surface IMDb signal.',
+    inputSchema: {
+      imdbIds: z.array(z.string()).min(1).max(50)
+    }
+  },
+  ({ imdbIds }) => safe(async () => {
+    const results = await imdb.batchGetTitles(imdbIds);
+    return asJson({ source: 'imdbapi.dev', count: results.length, results });
+  })
+);
+
+server.registerTool(
+  'movies_imdb_find_name',
+  {
+    title: 'Resolve a person name to IMDb nameIds',
+    description: 'Given a free-text name (e.g. "Christopher Nolan"), returns up to 3 candidate IMDb nameIds. Search-by-title + credits traversal, since imdbapi.dev has no direct /search/names endpoint. Feed the resulting nameIds into `movies_imdb_discover`.',
+    inputSchema: {
+      query: z.string()
+    }
+  },
+  ({ query }) => safe(async () => {
+    const matches = await imdb.findNameCandidates(query, 3);
+    return asJson({ query, count: matches.length, matches });
+  })
+);
+
+server.registerTool(
+  'movies_imdb_interests',
+  {
+    title: 'IMDb interest taxonomy',
+    description: 'Full list of IMDb interest tags (~162 granular themes: Heist, Time Travel, Space Opera, Cyberpunk, Neo-Noir, etc.). Cached locally for 7 days. Use `refresh: true` to force a fresh pull.',
+    inputSchema: {
+      refresh: z.boolean().optional()
+    }
+  },
+  ({ refresh }) => safe(async () => {
+    const interests = await imdb.listInterests({ refresh: refresh === true });
+    return asJson({ count: interests.length, interests });
+  })
 );
 
 // ---------- Watched-list tools ----------
@@ -237,6 +423,7 @@ server.registerTool(
     const details = await client.movieInfo({ id: movieId });
     const entry = {
       movieId,
+      imdbId: details.imdb_id ?? null,
       title: details.title,
       year: details.release_date ? details.release_date.slice(0, 4) : null,
       genres: details.genres?.map(g => g.name) ?? [],
@@ -305,6 +492,7 @@ server.registerTool(
     const details = await client.movieInfo({ id: movieId });
     const entry = {
       movieId,
+      imdbId: details.imdb_id ?? null,
       title: details.title,
       year: details.release_date ? details.release_date.slice(0, 4) : null,
       note: note ?? null
@@ -346,7 +534,7 @@ server.registerTool(
   'preferences_get',
   {
     title: 'Get taste preferences',
-    description: "The user's stored taste profile: liked/disliked genres, favorite directors/actors, decade and runtime prefs, mood defaults. Read this before recommending so suggestions match their taste.",
+    description: "The user's stored taste profile: liked/disliked genres, favorite directors/actors, decade and runtime prefs, mood defaults, liked IMDb interests/countries/languages. Read this before recommending so suggestions match their taste.",
     inputSchema: {}
   },
   () => safe(async () => asJson(await getPreferences()))
@@ -356,7 +544,7 @@ server.registerTool(
   'preferences_set',
   {
     title: 'Update taste preferences',
-    description: "Merge a patch into the user's preferences. Arrays are UNIONED (new unique values appended), objects shallow-merged, scalars replaced. Call this when the user reveals taste signals (\"I love slow cinema\", \"I avoid horror\", \"anything by Villeneuve\").",
+    description: "Merge a patch into the user's preferences. Arrays are UNIONED (new unique values appended), objects shallow-merged, scalars replaced. Call this when the user reveals taste signals (\"I love slow cinema\", \"I avoid horror\", \"anything by Villeneuve\", \"more Korean films\"). `likedInterests` accepts IMDb interest names or IDs; `likedCountries`/`likedLanguages` accept ISO codes.",
     inputSchema: {
       likedGenres: z.array(z.string()).optional(),
       dislikedGenres: z.array(z.string()).optional(),
@@ -372,7 +560,10 @@ server.registerTool(
         minMin: z.number().int().nullable().optional(),
         maxMin: z.number().int().nullable().optional()
       }).optional(),
-      moodDefaults: z.array(z.string()).optional()
+      moodDefaults: z.array(z.string()).optional(),
+      likedInterests: z.array(z.string()).optional().describe('IMDb interest names or IDs (in...)'),
+      likedCountries: z.array(z.string()).optional().describe('ISO 3166-1 alpha-2 codes'),
+      likedLanguages: z.array(z.string()).optional().describe('ISO 639-1/2 codes')
     }
   },
   (patch) => safe(async () => asJson(await setPreferences(patch)))
@@ -412,6 +603,7 @@ server.registerTool(
     return asJson({
       configured: !!key,
       apiKeySource: process.env.TMDB_API_KEY ? 'env' : (key ? 'config.json' : null),
+      imdbEnabled: !imdb.isDisabled(),
       dataDir: paths.dataDir,
       counts: {
         watched: watched.length,
@@ -419,7 +611,10 @@ server.registerTool(
         likedGenres: prefs.likedGenres.length,
         dislikedGenres: prefs.dislikedGenres.length,
         favoriteDirectors: prefs.favoriteDirectors.length,
-        favoriteMovies: prefs.favoriteMovies.length
+        favoriteMovies: prefs.favoriteMovies.length,
+        likedInterests: prefs.likedInterests?.length ?? 0,
+        likedCountries: prefs.likedCountries?.length ?? 0,
+        likedLanguages: prefs.likedLanguages?.length ?? 0
       }
     });
   })
