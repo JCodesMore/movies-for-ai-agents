@@ -10,6 +10,8 @@ export const paths = {
   preferences: path.join(DATA_DIR, 'preferences.json'),
   watched: path.join(DATA_DIR, 'watched.json'),
   watchlist: path.join(DATA_DIR, 'watchlist.json'),
+  lists: path.join(DATA_DIR, 'lists.json'),
+  active: path.join(DATA_DIR, 'active.json'),
   imdbCache: path.join(DATA_DIR, 'imdb-cache.json'),
   interestsCache: path.join(DATA_DIR, 'imdb-interests.json')
 };

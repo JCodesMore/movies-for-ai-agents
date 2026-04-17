@@ -29,14 +29,18 @@ You are surfacing a feed of notable movies. Two data sources are wired in — ro
 
 1. Decide the route. Call the chosen tool.
 2. **Filter against user taste** (always). Call `preferences_get` in parallel. Drop results whose genres intersect `dislikedGenres`. Flag entries already in `watched_list` as `[seen]` — don't remove them.
-3. **Present 5–8 picks** in a readable format. Default to IMDb rating — it's the score users trust:
-   - Title (Year) — IMDb 8.2 (1.4M votes when from `movies_imdb_discover`)
-   - One-sentence hook from plot
-   - Genres / interest tags
-   - `[seen]` marker if already watched
+3. **Present 5–8 picks** in a readable format. Default to bold + IMDb hyperlink for the title; IMDb rating is the score users trust:
 
-   TMDB list results (`movies_trending`, `movies_popular`, `movies_now_playing`, `movies_discover`) don't carry IMDb data. Options: (a) for the top 3–5 picks only, call `movies_details` to get `imdbId` + merged IMDb rating — best when the list is short; (b) display `TMDB 7.9` as a fallback when an IMDb-rated route isn't practical. Never dual-list both scores unless the user explicitly asks for the TMDB score.
-4. **Offer follow-ups.** "Want trailer / full details?" → `movies_details` (TMDB, merges IMDb signal). "Add to watchlist?" → `watchlist_add`.
+   ```
+   **[Title](https://www.imdb.com/title/{imdbId}/)** (Year[, Country]) — IMDb 8.2 — 128 min
+   [Genre, Genre] · [Interest, Interest]
+   One-sentence hook from plot.
+   ```
+
+   Append `[seen]` if the entry is already in `watched_list`.
+
+   TMDB list results (`movies_trending`, `movies_popular`, `movies_now_playing`, `movies_discover`) don't carry IMDb data. For the top 3–5 picks, call `movies_details` to hydrate `imdbId` + merged IMDb rating — those entries get the hyperlink. The remaining entries render as plain `**Title**` with `TMDB 7.9` as the rating fallback. Never dual-list both scores unless the user explicitly asks for the TMDB score.
+4. **Offer follow-ups.** "Want trailer / full details?" → `movies_details` (TMDB, merges IMDb signal). "Add to watchlist?" → `watchlist_add`. "Add X to my [name] list?" → `list_add({ listName, movieId })` — auto-creates the list. Confirm in one sentence: *"Added **[Weapons](imdb)** to halloween (4 total)."* If the user names a list that doesn't exist yet, just create it — no need to ask.
 
 ## Worked examples
 

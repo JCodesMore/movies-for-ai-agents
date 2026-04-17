@@ -67,7 +67,9 @@ Five skills that activate automatically based on what you say:
 | `recommend` | ask *"what should I watch?"* or describe a mood |
 | `movies-journal` | mention watching / finishing / loving / hating a movie — auto-logs it |
 
-Behind them, **24 MCP tools** expose TMDB search / recommendations / details, imdbapi.dev rating-aware discovery / interest filters / person lookup / awards / box office, and your local state. Type `/mcp` inside Claude Code to inspect them live.
+**New in 0.2.0** — *custom named lists* (say *"add Weapons to my halloween list"* and Claude organizes picks by theme), *active viewing state* (when you say *"I'll watch X tonight"* Claude tracks it and asks how it went next time), and *IMDb-hyperlinked titles* in every suggestion.
+
+Behind these skills, **35 MCP tools** expose TMDB search / recommendations / details, imdbapi.dev rating-aware discovery / interest filters / person lookup / awards / box office, custom named lists, active viewing, and your taste profile. Type `/mcp` inside Claude Code to inspect them live.
 
 ## Where your data lives
 
@@ -78,10 +80,13 @@ Everything stays on **your machine**, outside any one project folder:
 ├── config.json           ← your TMDB API key (permissions 600)
 ├── preferences.json      ← your taste profile (liked genres, directors, interests, etc.)
 ├── watched.json          ← what you've seen
-├── watchlist.json        ← what you're saving for later
+├── lists.json            ← every custom list, including the default "watchlist"
+├── active.json           ← films you've started but not finished — drives follow-ups
 ├── imdb-cache.json       ← cached imdbapi.dev responses (24h/6h TTLs)
 └── imdb-interests.json   ← cached IMDb interest taxonomy (7d TTL)
 ```
+
+> Upgrading from 0.1.x? Your old `watchlist.json` migrates into `lists.json` automatically on first read.
 
 Your taste follows you across every project and every machine that shares this directory. No telemetry, no analytics — nothing leaves your machine except TMDB search queries.
 

@@ -8,7 +8,10 @@ import { resolveGenreIds, getGenres } from './lib/genres.js';
 import {
   getPreferences, setPreferences,
   getWatched, addWatched, removeWatched,
-  getWatchlist, addWatchlist, removeWatchlist
+  getWatchlist, addWatchlist, removeWatchlist,
+  getLists, getList, addToList, removeFromList,
+  renameList, deleteList, listNames,
+  getActive, addActive, removeActive, touchActiveAsked
 } from './lib/state.js';
 import { setConfig, getApiKey } from './lib/config.js';
 import { paths } from './lib/paths.js';
@@ -617,6 +620,199 @@ server.registerTool(
         likedLanguages: prefs.likedLanguages?.length ?? 0
       }
     });
+  })
+);
+
+// ---------- Custom list tools ----------
+
+server.registerTool(
+  'lists_names',
+  {
+    title: 'List custom-list names + counts',
+    description: 'Returns a map of every custom list the user has created and how many entries it holds. Use to answer "show me my lists" or to confirm a list exists before adding to it.',
+    inputSchema: {}
+  },
+  () => safe(async () => asJson({ names: await listNames() }))
+);
+
+server.registerTool(
+  'lists_get_all',
+  {
+    title: 'Full contents of every custom list',
+    description: 'Returns the entire `lists.json` map: { listName: [entries] }. Useful when you need a cross-list view before recommending or de-duplicating.',
+    inputSchema: {}
+  },
+  () => safe(async () => asJson({ lists: await getLists() }))
+);
+
+server.registerTool(
+  'list_list',
+  {
+    title: 'Show entries in one custom list',
+    description: 'Return the entries of a single named list. Returns an empty array if the list does not exist (same shape as `watchlist_list`). The reserved name `watchlist` is the legacy default and is always available.',
+    inputSchema: {
+      listName: z.string().describe('Name of the list (e.g., "halloween", "date-night", "watchlist")'),
+      limit: z.number().int().min(1).optional()
+    }
+  },
+  ({ listName, limit }) => safe(async () => {
+    const list = await getList(listName);
+    return asJson({
+      listName,
+      total: list.length,
+      items: limit ? list.slice(0, limit) : list
+    });
+  })
+);
+
+server.registerTool(
+  'list_add',
+  {
+    title: 'Add a movie to a custom list',
+    description: 'Add a movie to a named list, auto-creating the list if it does not exist. Hydrates the entry from TMDB (title, year, imdbId) so renderers can produce hyperlinked output. Call this when the user says "add X to my halloween list", "save X for date night", etc.',
+    inputSchema: {
+      listName: z.string().describe('Name of the list (auto-created if missing)'),
+      movieId: z.number().int(),
+      note: z.string().optional().describe('Optional context — why it belongs on this list')
+    }
+  },
+  ({ listName, movieId, note }) => safe(async () => {
+    const client = await getClient();
+    const details = await client.movieInfo({ id: movieId });
+    const imdbId = details.imdb_id ?? null;
+    const imdbData = imdbId ? await tryImdb(() => imdb.getTitle(imdbId)) : null;
+    const entry = {
+      movieId,
+      imdbId,
+      title: details.title,
+      year: details.release_date ? details.release_date.slice(0, 4) : null,
+      imdbRating: imdbData?.imdbRating ?? null,
+      note: note ?? null
+    };
+    const list = await addToList(listName, entry);
+    return asJson({ listName, saved: entry, total: list.length });
+  })
+);
+
+server.registerTool(
+  'list_remove',
+  {
+    title: 'Remove a movie from a custom list',
+    description: 'Drop a movie from a named list by movieId. Returns the updated list.',
+    inputSchema: {
+      listName: z.string(),
+      movieId: z.number().int()
+    }
+  },
+  ({ listName, movieId }) => safe(async () => {
+    const list = await removeFromList(listName, movieId);
+    return asJson({ listName, removed: movieId, total: list.length });
+  })
+);
+
+server.registerTool(
+  'list_rename',
+  {
+    title: 'Rename a custom list',
+    description: 'Rename an existing list. Refuses to rename the reserved "watchlist" list (it backs the legacy `watchlist_*` tools). Refuses if the new name already exists.',
+    inputSchema: {
+      oldName: z.string(),
+      newName: z.string()
+    }
+  },
+  ({ oldName, newName }) => safe(async () => {
+    await renameList(oldName, newName);
+    return asJson({ ok: true, oldName, newName, names: await listNames() });
+  })
+);
+
+server.registerTool(
+  'list_delete',
+  {
+    title: 'Delete a custom list',
+    description: 'Delete a custom list and all its entries. Refuses to delete the reserved "watchlist" list. Use when the user says "delete my halloween list" or "drop the date-night list".',
+    inputSchema: { listName: z.string() }
+  },
+  ({ listName }) => safe(async () => {
+    await deleteList(listName);
+    return asJson({ ok: true, deleted: listName, names: await listNames() });
+  })
+);
+
+// ---------- Active viewing tools ----------
+
+server.registerTool(
+  'active_add',
+  {
+    title: 'Mark a movie as actively being watched',
+    description: 'Record that the user has started watching a movie but has not yet finished it. Call this when the user says "I\'ll watch X tonight", "starting X now", "going with X". The skill uses this to prompt for follow-up ("did you finish?") in a future session. Hydrates the entry from TMDB so future prompts can render the title with an IMDb hyperlink.',
+    inputSchema: {
+      movieId: z.number().int(),
+      source: z.string().optional().describe('Where the pickup came from — e.g., "recommend", "discover", "manual"')
+    }
+  },
+  ({ movieId, source }) => safe(async () => {
+    const client = await getClient();
+    const details = await client.movieInfo({ id: movieId });
+    const imdbId = details.imdb_id ?? null;
+    const entry = {
+      movieId,
+      imdbId,
+      title: details.title,
+      year: details.release_date ? details.release_date.slice(0, 4) : null,
+      source: source ?? null
+    };
+    const list = await addActive(entry);
+    return asJson({ saved: entry, total: list.length });
+  })
+);
+
+server.registerTool(
+  'active_list',
+  {
+    title: 'List actively-watching entries',
+    description: 'Return entries the user has started but not finished. Each entry includes computed `ageHours` (since `startedAt`) and `askedHoursAgo` (since `lastAskedAt`, or null if never asked). The `recommend` skill uses these to decide whether to lead with a one-line catch-up prompt before new picks.',
+    inputSchema: {}
+  },
+  () => safe(async () => {
+    const list = await getActive();
+    const now = Date.now();
+    const items = list.map(e => {
+      const startedMs = e.startedAt ? new Date(e.startedAt).getTime() : null;
+      const askedMs = e.lastAskedAt ? new Date(e.lastAskedAt).getTime() : null;
+      return {
+        ...e,
+        ageHours: startedMs != null ? (now - startedMs) / 3_600_000 : null,
+        askedHoursAgo: askedMs != null ? (now - askedMs) / 3_600_000 : null
+      };
+    });
+    return asJson({ total: items.length, items });
+  })
+);
+
+server.registerTool(
+  'active_remove',
+  {
+    title: 'Remove an actively-watching entry',
+    description: 'Drop a movie from the active list — call after the user resolves it (finished, dropped, etc.). The watched-add tool does NOT auto-clear active state, so route both calls when applicable.',
+    inputSchema: { movieId: z.number().int() }
+  },
+  ({ movieId }) => safe(async () => {
+    const list = await removeActive(movieId);
+    return asJson({ removed: movieId, total: list.length });
+  })
+);
+
+server.registerTool(
+  'active_touch_asked',
+  {
+    title: 'Mark an active entry as just-asked-about',
+    description: 'Update `lastAskedAt` on an active entry to now. Call this when the user replies "still watching" to a follow-up prompt — prevents the skill from re-asking within 24h.',
+    inputSchema: { movieId: z.number().int() }
+  },
+  ({ movieId }) => safe(async () => {
+    const list = await touchActiveAsked(movieId);
+    return asJson({ touched: movieId, total: list.length });
   })
 );
 

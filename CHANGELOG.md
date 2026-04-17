@@ -2,6 +2,20 @@
 
 All notable changes to **claude-for-movies** are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-04-17
+
+### Added
+- **Custom named lists.** Organize picks into themed collections (`halloween`, `date-night`, `comfort-rewatches`, anything you want). Eight new MCP tools: `lists_names`, `lists_get_all`, `list_list`, `list_add`, `list_remove`, `list_rename`, `list_delete`. Lists auto-create on first add. The reserved name `watchlist` always exists and backs the legacy `watchlist_*` tools.
+- **Active viewing state.** When you say *"I'll watch X tonight"* the plugin tracks the pickup. Next time you ask for a recommendation (>24h later), Claude leads with a one-line catch-up prompt and routes your reply into `watched.json` with a rating. Three new MCP tools: `active_add`, `active_list`, `active_remove`, plus `active_touch_asked` for "still watching" replies.
+- **IMDb-hyperlinked titles** in all suggestion output. `recommend`, `find-movie`, and `discover-movies` now render picks as `**[Title](https://www.imdb.com/title/{imdbId}/)**` when the IMDb ID is available; plain bold otherwise.
+- Skill guidance for proactive follow-up ("did you finish X?") with five-option rating capture (loved / okay / didn't love / still watching / dropped).
+
+### Changed
+- **Tool count: 24 → 35.** All new tools live alongside the existing 24; nothing was removed.
+- `watchlist_*` tools now delegate to the generic `list_*` primitives — behavior unchanged for callers.
+- Legacy `~/.claude/data/claude-for-movies/watchlist.json` migrates to `lists.json` automatically on first read; the legacy file is deleted post-migration.
+- `setup` skill mentions custom lists + active viewing during onboarding.
+
 ## [0.1.3] — 2026-04-17
 
 ### Changed

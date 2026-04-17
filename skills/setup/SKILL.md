@@ -27,6 +27,8 @@ You are setting up the `claude-for-movies` plugin for the user. This is a one-ti
    - *"What's trending this week?"* → discover
    - *"What should I watch tonight?"* → recommend
    - *"I just watched X, loved it"* → auto-logs to history
+   - *"Add X to my halloween list"* → custom named lists, organized by theme
+   - When you start a suggested film, it's tracked as *active* — next session I'll ask how it went
 
 ## Notes
 
