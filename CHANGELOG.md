@@ -2,7 +2,7 @@
 
 All notable changes to **claude-for-movies** are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.2] — 2026-04-17
 
 ### Added
 - Hybrid data source: TMDB + [imdbapi.dev](https://api.imdbapi.dev) (no extra key required).
@@ -26,6 +26,11 @@ All notable changes to **claude-for-movies** are documented here. The format fol
 
 ### Fixed
 - Graceful fallback: any imdbapi.dev failure (timeout, non-2xx, network) is swallowed and logged to stderr; TMDB-only data is returned so the plugin never hard-fails if imdbapi.dev is down.
+
+## [0.1.1] — 2026-04-17
+
+### Fixed
+- Plugin install: MCP server failed to start with `ERR_MODULE_NOT_FOUND` because Claude Code's plugin installer runs `npm install` at the repo root, but the package manifest was nested under `mcp-server/`. Added a root `package.json` so runtime dependencies are installed where Node's module resolution will find them.
 
 ## [0.1.0] — 2026-04-17
 
