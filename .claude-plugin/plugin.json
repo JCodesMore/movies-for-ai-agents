@@ -7,10 +7,7 @@
     "url": "https://github.com/JCodesMore"
   },
   "homepage": "https://github.com/JCodesMore/claude-for-movies",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/JCodesMore/claude-for-movies.git"
-  },
+  "repository": "https://github.com/JCodesMore/claude-for-movies.git",
   "bugs": {
     "url": "https://github.com/JCodesMore/claude-for-movies/issues"
   },
