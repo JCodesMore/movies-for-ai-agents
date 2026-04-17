@@ -1,0 +1,45 @@
+# Node / MCP server
+node_modules/
+mcp-server/node_modules/
+npm-debug.log*
+mcp-server/npm-debug.log*
+
+# Per-project plugin settings (never commit; contains user secrets)
+.claude/*.local.md
+.claude/*.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Dev/build artifacts
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Personal demo-recording prep notes (not shipped)
+DEMO.md
+
+# Stray lockfile at repo root — lockfile belongs inside mcp-server/
+/package-lock.json
+
+# Development-only tooling (not shipped to users of the plugin)
+openspec/
+.claude/commands/opsx/
+.claude/skills/openspec-apply-change/
+.claude/skills/openspec-archive-change/
+.claude/skills/openspec-explore/
+.claude/skills/openspec-propose/
