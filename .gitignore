@@ -33,9 +33,6 @@ coverage/
 # Personal demo-recording prep notes (not shipped)
 DEMO.md
 
-# Stray lockfile at repo root — lockfile belongs inside mcp-server/
-/package-lock.json
-
 # Development-only tooling (not shipped to users of the plugin)
 openspec/
 .claude/commands/opsx/

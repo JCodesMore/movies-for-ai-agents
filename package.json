@@ -1,0 +1,21 @@
+{
+  "name": "claude-for-movies",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Claude Code plugin for movie discovery, recommendations, and tracking. TMDB-powered via moviedb-promise, with a taste profile and watch history that follow you across projects.",
+  "repository": "https://github.com/JCodesMore/claude-for-movies.git",
+  "homepage": "https://github.com/JCodesMore/claude-for-movies#readme",
+  "bugs": {
+    "url": "https://github.com/JCodesMore/claude-for-movies/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "JCodesMore (https://github.com/JCodesMore)",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "moviedb-promise": "^4.0.0",
+    "zod": "^3.24.0"
+  }
+}
