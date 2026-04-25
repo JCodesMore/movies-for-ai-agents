@@ -1,6 +1,6 @@
 <div align="center">
 
-# claude-for-movies
+# Claude for Movies
 
 ### Your personal movie concierge — built into Claude Code
 
