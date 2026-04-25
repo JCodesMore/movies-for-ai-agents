@@ -2,9 +2,9 @@
 
 # Claude for Movies
 
-### Your personal AI movie buddy — built into Claude Code
+### Your personal AI movie buddy
 
-Ask *"what should I watch tonight?"* — and get picks that actually fit your taste. Mention a film and Claude quietly logs it. The more you talk, the smarter it gets.
+Ask *"what should I watch tonight?"* and get picks that actually fit your taste. Mention a film and Claude quietly logs it. The more you talk, the smarter it gets.
 
 [![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
 
