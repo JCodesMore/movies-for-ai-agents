@@ -111,7 +111,7 @@ If you'd rather clone and run it directly:
 git clone https://github.com/JCodesMore/claude-for-movies.git
 cd claude-for-movies/mcp-server && npm install
 cd ..
-cc --plugin-dir .
+claude --plugin-dir .
 ```
 
 Or skip `/claude-for-movies:setup` entirely by exporting your key as an environment variable:

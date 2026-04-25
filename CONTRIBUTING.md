@@ -22,7 +22,7 @@ npm install
 From the project root:
 
 ```bash
-cc --plugin-dir .
+claude --plugin-dir .
 ```
 
 Inside Claude Code, run `/mcp` — you should see `claude-for-movies` listed with 18 tools.
