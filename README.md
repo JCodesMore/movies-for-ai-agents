@@ -2,7 +2,7 @@
 
 # Claude for Movies
 
-### Your personal movie concierge — built into Claude Code
+### Your personal AI movie buddy — built into Claude Code
 
 Ask *"what should I watch tonight?"* — Claude already knows what you've seen, remembers what you've loved, and picks accordingly. Mention a film in passing and it quietly logs it and learns your taste. Your profile follows you across every project, every machine.
 
