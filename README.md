@@ -12,6 +12,8 @@ Ask Claude *"what should I watch tonight?"* — it already knows what you've see
 
 [![Watch the demo](https://img.youtube.com/vi/g4qwbu5H278/maxresdefault.jpg)](https://youtu.be/g4qwbu5H278)
 
+> Click the image above to watch the full walkthrough on YouTube.
+
 ## Install in 3 steps
 
 **1. Get a free TMDB API key** — takes about 2 minutes:
