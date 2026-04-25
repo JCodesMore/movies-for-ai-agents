@@ -8,7 +8,7 @@ Ask *"what should I watch tonight?"* and get picks that actually fit your taste.
 
 [![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
 
-[Install](#install) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet) · [Demo](#demo)
+[Quick Start](#quick-start) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet) · [Demo](#demo)
 
 </div>
 
@@ -20,7 +20,7 @@ Ask *"what should I watch tonight?"* and get picks that actually fit your taste.
 
 > Click the image to watch the 60-second walkthrough.
 
-## Install
+## Quick Start
 
 **1. Get a free TMDB API key** (~2 minutes) at https://www.themoviedb.org/settings/api — copy your **v3 key**.
 
