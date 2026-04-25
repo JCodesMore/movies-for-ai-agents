@@ -1,25 +1,32 @@
+<div align="center">
+
 # claude-for-movies
 
-[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Discord](https://img.shields.io/discord/1400896964597383279?label=discord&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
-[![More plugins](https://img.shields.io/badge/more%20plugins-jcodesmore--plugins-black)](https://github.com/JCodesMore/jcodesmore-plugins)
+### Your personal movie concierge — built into Claude Code
 
-> Your personal movie concierge, built into Claude Code. Powered by [TMDB](https://www.themoviedb.org/) — and, for IMDb ratings + richer discovery filters, [imdbapi.dev](https://api.imdbapi.dev) (no extra key needed).
+Ask *"what should I watch tonight?"* — Claude already knows what you've seen, remembers what you've loved, and picks accordingly. Mention a film in passing and it quietly logs it and learns your taste. Your profile follows you across every project, every machine.
 
-Ask Claude *"what should I watch tonight?"* — it already knows what you've seen, remembers what you've loved, and picks accordingly. Mention a film in passing and it quietly logs it and learns your taste. Your profile follows you across every project, every machine.
+**Free** · **Open source** · **Powered by TMDB + IMDb**
+
+[![Discord](https://img.shields.io/discord/1400896964597383279?logo=discord&logoColor=white&color=5865F2&style=for-the-badge)](https://discord.gg/babcVNJBet)
+[![Stars](https://img.shields.io/github/stars/JCodesMore/claude-for-movies?style=for-the-badge&color=f1c40f)](https://github.com/JCodesMore/claude-for-movies/stargazers)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=for-the-badge)](LICENSE)
+
+[Install](#install) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet) · [Demo](#demo)
+
+</div>
+
+---
 
 ## Demo
 
 [![Watch the demo](https://img.youtube.com/vi/g4qwbu5H278/maxresdefault.jpg)](https://youtu.be/g4qwbu5H278)
 
-> Click the image above to watch the full walkthrough on YouTube.
+> Click the image to watch the 60-second walkthrough.
 
-## Install in 3 steps
+## Install
 
-**1. Get a free TMDB API key** — takes about 2 minutes:
-
-- Go to https://www.themoviedb.org/settings/api
-- Create an account, accept the developer terms, copy your **v3 API Key**.
+**1. Get a free TMDB API key** (~2 minutes) at https://www.themoviedb.org/settings/api — copy your **v3 key**.
 
 **2. Install the plugin** — inside Claude Code, run:
 
@@ -28,15 +35,9 @@ Ask Claude *"what should I watch tonight?"* — it already knows what you've see
 /plugin install claude-for-movies@jcodesmore-plugins
 ```
 
-Then fully **restart Claude Code** (quit the app and reopen — not just `/exit`).
+Then fully **restart Claude Code** (quit the app and reopen).
 
-**3. Give the plugin your key** — in Claude Code, type:
-
-```
-/claude-for-movies:setup
-```
-
-Paste your TMDB key when prompted. Done — you're ready to go.
+**3. Add your key** — run `/claude-for-movies:setup` and paste it when prompted. Done.
 
 ## Try it
 
@@ -44,18 +45,16 @@ Talk to Claude like a friend:
 
 - *"What should I watch tonight?"*
 - *"Find me that 90s movie about a hacker..."*
-- *"I just finished Arrival, absolutely loved it."* — Claude silently logs it and learns your taste
+- *"I just finished Arrival, absolutely loved it."* — auto-logs it, learns your taste
 - *"Something cerebral, under two hours."*
 - *"Sci-fi with an IMDb rating of 8 or higher from the 2010s."*
-- *"Best heist movies of all time."*
-- *"Christopher Nolan's filmography."*
 - *"Hidden gems — highly rated but obscure."*
 
-The more you mention what you watch, the better the recommendations get.
+The more you mention what you watch, the better it gets.
 
 ## What's inside
 
-Five skills that activate automatically based on what you say:
+**Five smart skills** that activate based on what you say · **35 MCP tools** for search, discovery, ratings, lists, and your taste profile · **Your taste follows you** across every project, every machine
 
 | Skill | Triggers when you... |
 |---|---|
@@ -65,11 +64,14 @@ Five skills that activate automatically based on what you say:
 | `recommend` | ask *"what should I watch?"* or describe a mood |
 | `movies-journal` | mention watching / finishing / loving / hating a movie — auto-logs it |
 
-**New in 0.2.0** — *custom named lists* (say *"add Weapons to my halloween list"* and Claude organizes picks by theme), *active viewing state* (when you say *"I'll watch X tonight"* Claude tracks it and asks how it went next time), and *IMDb-hyperlinked titles* in every suggestion.
+**New in 0.2.0** — *custom named lists* (say *"add Weapons to my halloween list"*), *active viewing state* (when you say *"I'll watch X tonight"* Claude tracks it and asks how it went next time), and *IMDb-hyperlinked titles* in every suggestion.
 
-Behind these skills, **35 MCP tools** expose TMDB search / recommendations / details, imdbapi.dev rating-aware discovery / interest filters / person lookup / awards / box office, custom named lists, active viewing, and your taste profile. Type `/mcp` inside Claude Code to inspect them live.
+## Community
 
-## Where your data lives
+[**Discord**](https://discord.gg/babcVNJBet) — chat, help, show-and-tell · [**Issues**](https://github.com/JCodesMore/claude-for-movies/issues) — bugs & feature requests · [**Contribute**](CONTRIBUTING.md) · [**More plugins**](https://github.com/JCodesMore/jcodesmore-plugins)
+
+<details>
+<summary><b>Where your data lives</b></summary>
 
 Everything stays on **your machine**, outside any one project folder:
 
@@ -79,7 +81,7 @@ Everything stays on **your machine**, outside any one project folder:
 ├── preferences.json      ← your taste profile (liked genres, directors, interests, etc.)
 ├── watched.json          ← what you've seen
 ├── lists.json            ← every custom list, including the default "watchlist"
-├── active.json           ← films you've started but not finished — drives follow-ups
+├── active.json           ← films you've started but not finished
 ├── imdb-cache.json       ← cached imdbapi.dev responses (24h/6h TTLs)
 └── imdb-interests.json   ← cached IMDb interest taxonomy (7d TTL)
 ```
@@ -88,7 +90,10 @@ Everything stays on **your machine**, outside any one project folder:
 
 Your taste follows you across every project and every machine that shares this directory. No telemetry, no analytics — nothing leaves your machine except TMDB search queries.
 
-## Troubleshooting
+</details>
+
+<details>
+<summary><b>Troubleshooting</b></summary>
 
 | Something's off | Fix |
 |---|---|
@@ -99,14 +104,10 @@ Your taste follows you across every project and every machine that shares this d
 
 More help in the [Discord](https://discord.gg/babcVNJBet).
 
-## Community
+</details>
 
-- **Chat / help / show-and-tell:** [Discord](https://discord.gg/babcVNJBet)
-- **Bugs & feature requests:** [GitHub issues](https://github.com/JCodesMore/claude-for-movies/issues)
-- **Contribute:** see [CONTRIBUTING.md](CONTRIBUTING.md)
-- **More plugins:** [`jcodesmore-plugins`](https://github.com/JCodesMore/jcodesmore-plugins)
-
-## Advanced install (without the marketplace)
+<details>
+<summary><b>Advanced install (without the marketplace)</b></summary>
 
 If you'd rather clone and run it directly:
 
@@ -125,17 +126,19 @@ export TMDB_API_KEY="your_key_here"
 
 The environment variable takes precedence over `config.json` when both are set.
 
-## Requirements
+**Requirements:** Node.js ≥ 18, free [TMDB API key](https://www.themoviedb.org/settings/api).
 
-- Node.js ≥ 18
-- A free [TMDB API key](https://www.themoviedb.org/settings/api) (v3)
+</details>
 
-## Built on
+<details>
+<summary><b>Built on</b></summary>
 
 - [moviedb-promise](https://github.com/grantholle/moviedb-promise) — TMDB client
 - [Model Context Protocol SDK](https://github.com/modelcontextprotocol/sdk) — tool exposure to Claude
 - [TMDB](https://www.themoviedb.org/) — fuzzy search, trending, now-playing, ML recommendations, watch providers
 - [imdbapi.dev](https://api.imdbapi.dev) — IMDb ratings, Metascore, interest taxonomy, rating-aware discovery, awards, box office (no key required)
+
+</details>
 
 ## License
 
