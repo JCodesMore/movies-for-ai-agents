@@ -7,7 +7,6 @@
 Ask *"what should I watch tonight?"* — Claude already knows what you've seen, remembers what you've loved, and picks accordingly. Mention a film in passing and it quietly logs it and learns your taste. Your profile follows you across every project, every machine.
 
 [![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=for-the-badge)](LICENSE)
 
 [Install](#install) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet) · [Demo](#demo)
 
