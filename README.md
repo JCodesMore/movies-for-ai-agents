@@ -10,11 +10,7 @@ Ask Claude *"what should I watch tonight?"* — it already knows what you've see
 
 ## Demo
 
-> **60-second demo video coming soon.** Star the repo to get notified.
-
-<!-- When the demo is live, replace the line above with:
-[![Watch the demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID)
--->
+[![Watch the demo](https://img.youtube.com/vi/g4qwbu5H278/maxresdefault.jpg)](https://youtu.be/g4qwbu5H278)
 
 ## Install in 3 steps
 
