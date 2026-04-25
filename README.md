@@ -8,7 +8,7 @@ Ask *"what should I watch tonight?"* — Claude already knows what you've seen, 
 
 **Free** · **Open source** · **Powered by TMDB + IMDb**
 
-[![Discord](https://img.shields.io/discord/1400896964597383279?logo=discord&logoColor=white&color=5865F2&style=for-the-badge)](https://discord.gg/babcVNJBet)
+[![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
 [![Stars](https://img.shields.io/github/stars/JCodesMore/claude-for-movies?style=for-the-badge&color=f1c40f)](https://github.com/JCodesMore/claude-for-movies/stargazers)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=for-the-badge)](LICENSE)
 
