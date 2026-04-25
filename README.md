@@ -22,7 +22,7 @@ Ask *"what should I watch tonight?"* and get picks that actually fit your taste.
 
 ## Quick Start
 
-**1. Get a free TMDB API key** (~2 minutes) at https://www.themoviedb.org/settings/api — copy your **v3 key**.
+**1. Get a free TMDB API key** (~2 minutes) at https://www.themoviedb.org/settings/api — copy your **API key**.
 
 **2. Install the plugin** — inside Claude Code, run:
 
