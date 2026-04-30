@@ -1,11 +1,11 @@
 ---
 name: setup
-description: First-run configuration for the claude-for-movies plugin. Use when the user says "set up claude-for-movies", "configure movies", "first run", "add my TMDB key", "set up my movie profile", or when any other claude-for-movies skill calls an MCP tool that reports "TMDB API key not configured". Captures the TMDB API key and, optionally, a brief taste-priming pass (favorite genres, directors, a few favorite movies) so later recommendations work out of the gate.
+description: First-run configuration for the movies-for-ai-agents plugin. Use when the user says "set up movies-for-ai-agents", "configure movies", "first run", "add my TMDB key", "set up my movie profile", or when any other movies-for-ai-agents skill calls an MCP tool that reports "TMDB API key not configured". Captures the TMDB API key and, optionally, a brief taste-priming pass (favorite genres, directors, a few favorite movies) so later recommendations work out of the gate.
 ---
 
 # setup
 
-You are setting up the `claude-for-movies` plugin for the user. This is a one-time flow that writes to user-global storage at `~/.claude/data/claude-for-movies/` (follows the user across every Claude Code project).
+You are setting up the `movies-for-ai-agents` plugin for the user. This is a one-time flow that writes to user-global storage at `~/.claude/data/movies-for-ai-agents/` (follows the user across every Claude Code project).
 
 ## Steps
 
@@ -32,6 +32,6 @@ You are setting up the `claude-for-movies` plugin for the user. This is a one-ti
 
 ## Notes
 
-- The TMDB key is stored in `~/.claude/data/claude-for-movies/config.json` (chmod 600). Alternatively, the user can set `TMDB_API_KEY` in their environment — env var takes precedence over the stored value.
+- The TMDB key is stored in `~/.claude/data/movies-for-ai-agents/config.json` (chmod 600). Alternatively, the user can set `TMDB_API_KEY` in their environment — env var takes precedence over the stored value.
 - Never echo the TMDB key back in your response after saving it.
 - If the user has `TMDB_API_KEY` already set, skip the key prompt and jump straight to taste-priming.

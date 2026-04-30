@@ -1,12 +1,12 @@
 {
-  "name": "claude-for-movies",
+  "name": "movies-for-ai-agents",
   "version": "0.2.1",
   "private": true,
-  "description": "Claude Code plugin for movie discovery, recommendations, and tracking. TMDB-powered via moviedb-promise, with a taste profile and watch history that follow you across projects.",
-  "repository": "https://github.com/JCodesMore/claude-for-movies.git",
-  "homepage": "https://github.com/JCodesMore/claude-for-movies#readme",
+  "description": "Movie discovery, recommendations, and tracking for AI agents. TMDB-powered via moviedb-promise, with a taste profile and watch history that follow you across projects.",
+  "repository": "https://github.com/JCodesMore/movies-for-ai-agents.git",
+  "homepage": "https://github.com/JCodesMore/movies-for-ai-agents#readme",
   "bugs": {
-    "url": "https://github.com/JCodesMore/claude-for-movies/issues"
+    "url": "https://github.com/JCodesMore/movies-for-ai-agents/issues"
   },
   "license": "Apache-2.0",
   "author": "JCodesMore (https://github.com/JCodesMore)",

@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Only the latest minor version of `claude-for-movies` receives security updates.
+Only the latest minor version of `movies-for-ai-agents` receives security updates.
 
 | Version | Supported |
 |---|---|
@@ -10,7 +10,7 @@ Only the latest minor version of `claude-for-movies` receives security updates.
 
 ## Where your data lives
 
-All plugin state is stored **locally** in `~/.claude/data/claude-for-movies/`:
+All plugin state is stored **locally** in `~/.claude/data/movies-for-ai-agents/`:
 
 - `config.json` — your TMDB API key (created with `0600` permissions, readable only by you).
 - `preferences.json` — your taste profile.
@@ -24,13 +24,13 @@ All plugin state is stored **locally** in `~/.claude/data/claude-for-movies/`:
 - Your TMDB key is stored in `config.json` with file permissions set to `0600` at creation.
 - The key is **never** logged, echoed to stdout, or included in error messages or stack traces.
 - If you prefer environment variables, set `TMDB_API_KEY` in your shell — it takes precedence over `config.json` when both are set.
-- Rotating your key: delete `config.json` (or unset `TMDB_API_KEY`) and run `/claude-for-movies:setup` again.
+- Rotating your key: delete `config.json` (or unset `TMDB_API_KEY`) and run `/movies-for-ai-agents:setup` again.
 
 ## Reporting a vulnerability
 
 **Please do not open a public GitHub issue for security problems.** Instead:
 
-- Open a private security advisory at https://github.com/JCodesMore/claude-for-movies/security/advisories/new, or
+- Open a private security advisory at https://github.com/JCodesMore/movies-for-ai-agents/security/advisories/new, or
 - Reach out in [Discord](https://discord.gg/babcVNJBet) to arrange a private channel.
 
 You can expect an acknowledgement within 7 days and an update on triage within 14 days.

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **claude-for-movies** are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to **movies-for-ai-agents** are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.2.1] — 2026-04-17
 
@@ -19,7 +19,7 @@ All notable changes to **claude-for-movies** are documented here. The format fol
 ### Changed
 - **Tool count: 24 → 35.** All new tools live alongside the existing 24; nothing was removed.
 - `watchlist_*` tools now delegate to the generic `list_*` primitives — behavior unchanged for callers.
-- Legacy `~/.claude/data/claude-for-movies/watchlist.json` migrates to `lists.json` automatically on first read; the legacy file is deleted post-migration.
+- Legacy `~/.claude/data/movies-for-ai-agents/watchlist.json` migrates to `lists.json` automatically on first read; the legacy file is deleted post-migration.
 - `setup` skill mentions custom lists + active viewing during onboarding.
 
 ## [0.1.3] — 2026-04-17
@@ -42,7 +42,7 @@ All notable changes to **claude-for-movies** are documented here. The format fol
 - `movies_discover` accepts an optional `minImdbRating` that routes the query to imdbapi.dev for IMDb-rating-aware filtering.
 - Preferences schema extended (backward-compatible) with optional `likedInterests`, `likedCountries`, `likedLanguages`.
 - Reference docs at `docs/api-reference/imdbapi-dev.md` and `docs/api-reference/tmdb.md` for skills to consult when crafting fresh query patterns.
-- Disk-backed response cache (`~/.claude/data/claude-for-movies/imdb-cache.json`) with 24h / 6h / 7d TTLs and 5 MB soft cap.
+- Disk-backed response cache (`~/.claude/data/movies-for-ai-agents/imdb-cache.json`) with 24h / 6h / 7d TTLs and 5 MB soft cap.
 - `IMDB_DISABLE=1` env var to force imdbapi.dev offline if needed.
 
 ### Changed
@@ -66,15 +66,15 @@ All notable changes to **claude-for-movies** are documented here. The format fol
   - **TMDB** (8) — `movies_search`, `movies_discover`, `movies_trending`, `movies_popular`, `movies_now_playing`, `movies_recommendations`, `movies_details`, `movies_genres`
   - **Local state** (8) — `watched_add`, `watched_list`, `watched_remove`, `watchlist_add`, `watchlist_list`, `watchlist_remove`, `preferences_get`, `preferences_set`
   - **Config** (2) — `config_set_api_key`, `config_status`
-- User-global storage at `~/.claude/data/claude-for-movies/` — taste profile and watch history follow users across projects.
+- User-global storage at `~/.claude/data/movies-for-ai-agents/` — taste profile and watch history follow users across projects.
 - TMDB integration via [moviedb-promise](https://github.com/grantholle/moviedb-promise).
-- API key management: interactive `/claude-for-movies:setup`, or `TMDB_API_KEY` environment variable (env var takes precedence).
+- API key management: interactive `/movies-for-ai-agents:setup`, or `TMDB_API_KEY` environment variable (env var takes precedence).
 - `config.json` is created with `0600` permissions so the key is readable only by the owner.
 
-[Unreleased]: https://github.com/JCodesMore/claude-for-movies/compare/v0.2.1...HEAD
-[0.2.1]: https://github.com/JCodesMore/claude-for-movies/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/JCodesMore/claude-for-movies/compare/v0.1.3...v0.2.0
-[0.1.3]: https://github.com/JCodesMore/claude-for-movies/compare/v0.1.2...v0.1.3
-[0.1.2]: https://github.com/JCodesMore/claude-for-movies/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/JCodesMore/claude-for-movies/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/JCodesMore/claude-for-movies/releases/tag/v0.1.0
+[Unreleased]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.1.3...v0.2.0
+[0.1.3]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/JCodesMore/movies-for-ai-agents/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/JCodesMore/movies-for-ai-agents/releases/tag/v0.1.0

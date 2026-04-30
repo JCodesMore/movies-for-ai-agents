@@ -1,20 +1,20 @@
 {
-  "name": "claude-for-movies-mcp",
+  "name": "movies-for-ai-agents-mcp",
   "version": "0.2.1",
   "private": true,
-  "description": "MCP server for the claude-for-movies plugin. Wraps TMDB (moviedb-promise) and manages user-global taste/watched state.",
+  "description": "MCP server for the movies-for-ai-agents plugin. Wraps TMDB (moviedb-promise) and manages user-global taste/watched state.",
   "type": "module",
   "main": "index.js",
   "author": "JCodesMore (https://github.com/JCodesMore)",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JCodesMore/claude-for-movies.git",
+    "url": "https://github.com/JCodesMore/movies-for-ai-agents.git",
     "directory": "mcp-server"
   },
-  "homepage": "https://github.com/JCodesMore/claude-for-movies#readme",
+  "homepage": "https://github.com/JCodesMore/movies-for-ai-agents#readme",
   "bugs": {
-    "url": "https://github.com/JCodesMore/claude-for-movies/issues"
+    "url": "https://github.com/JCodesMore/movies-for-ai-agents/issues"
   },
   "engines": {
     "node": ">=18"

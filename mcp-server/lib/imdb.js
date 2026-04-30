@@ -48,7 +48,7 @@ function persistDiskCache() {
       }
       await fs.writeFile(paths.imdbCache, payload, 'utf8');
     } catch (err) {
-      process.stderr.write(`[claude-for-movies] imdb cache write failed: ${err.message}\n`);
+      process.stderr.write(`[movies-for-ai-agents] imdb cache write failed: ${err.message}\n`);
     }
   });
   return diskWriteQueue;
@@ -288,7 +288,7 @@ export async function listInterests({ refresh = false } = {}) {
       'utf8'
     );
   } catch (err) {
-    process.stderr.write(`[claude-for-movies] interests cache write failed: ${err.message}\n`);
+    process.stderr.write(`[movies-for-ai-agents] interests cache write failed: ${err.message}\n`);
   }
   return interests;
 }
