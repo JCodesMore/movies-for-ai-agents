@@ -18,7 +18,7 @@ import { paths } from './lib/paths.js';
 import * as imdb from './lib/imdb.js';
 
 const server = new McpServer({
-  name: 'claude-for-movies',
+  name: 'movies-for-ai-agents',
   version: '0.2.1'
 });
 
@@ -39,7 +39,7 @@ async function tryImdb(fn, fallback = null) {
   try {
     return await fn();
   } catch (err) {
-    process.stderr.write(`[claude-for-movies] imdbapi.dev enrichment skipped: ${err.message}\n`);
+    process.stderr.write(`[movies-for-ai-agents] imdbapi.dev enrichment skipped: ${err.message}\n`);
     return fallback;
   }
 }
@@ -822,6 +822,6 @@ try {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 } catch (err) {
-  console.error('[claude-for-movies] MCP server failed to start:', err?.stack ?? err);
+  console.error('[movies-for-ai-agents] MCP server failed to start:', err?.stack ?? err);
   process.exit(1);
 }

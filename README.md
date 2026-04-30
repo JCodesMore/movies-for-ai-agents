@@ -1,6 +1,6 @@
 <div align="center">
 
-# Claude for Movies
+# Movies for AI Agents
 
 ### Your personal AI movie buddy
 
@@ -28,12 +28,12 @@ Ask *"what should I watch tonight?"* and get picks that actually fit your taste.
 
 ```
 /plugin marketplace add JCodesMore/jcodesmore-plugins
-/plugin install claude-for-movies@jcodesmore-plugins
+/plugin install movies-for-ai-agents@jcodesmore-plugins
 ```
 
 Then fully **restart Claude Code** (quit the app and reopen).
 
-**3. Add your key** — run `/claude-for-movies:setup` and paste it when prompted. Done.
+**3. Add your key** — run `/movies-for-ai-agents:setup` and paste it when prompted. Done.
 
 ## Try it
 
@@ -64,7 +64,7 @@ The more you mention what you watch, the better it gets.
 
 ## Community
 
-[**Discord**](https://discord.gg/babcVNJBet) — chat, help, show-and-tell · [**Issues**](https://github.com/JCodesMore/claude-for-movies/issues) — bugs & feature requests · [**Contribute**](CONTRIBUTING.md) · [**More plugins**](https://github.com/JCodesMore/jcodesmore-plugins)
+[**Discord**](https://discord.gg/babcVNJBet) — chat, help, show-and-tell · [**Issues**](https://github.com/JCodesMore/movies-for-ai-agents/issues) — bugs & feature requests · [**Contribute**](CONTRIBUTING.md) · [**More plugins**](https://github.com/JCodesMore/jcodesmore-plugins)
 
 <details>
 <summary><b>Where your data lives</b></summary>
@@ -72,7 +72,7 @@ The more you mention what you watch, the better it gets.
 Everything stays on **your machine**, outside any one project folder:
 
 ```
-~/.claude/data/claude-for-movies/
+~/.claude/data/movies-for-ai-agents/
 ├── config.json           ← your TMDB API key (permissions 600)
 ├── preferences.json      ← your taste profile (liked genres, directors, interests, etc.)
 ├── watched.json          ← what you've seen
@@ -93,7 +93,7 @@ Your taste follows you across every project and every machine that shares this d
 
 | Something's off | Fix |
 |---|---|
-| *"TMDB API key not configured"* | Run `/claude-for-movies:setup` — or set `TMDB_API_KEY` in your shell environment. |
+| *"TMDB API key not configured"* | Run `/movies-for-ai-agents:setup` — or set `TMDB_API_KEY` in your shell environment. |
 | Plugin doesn't show up in `/mcp` | Fully quit Claude Code and reopen. The plugin registers on startup. |
 | *"Cannot find module '@modelcontextprotocol/sdk'"* | Only happens with manual install — run `cd mcp-server && npm install`. |
 | Recommendations still feel generic | Tell Claude about 3–5 movies you love. Give it some signal to work with. |
@@ -108,13 +108,13 @@ More help in the [Discord](https://discord.gg/babcVNJBet).
 If you'd rather clone and run it directly:
 
 ```bash
-git clone https://github.com/JCodesMore/claude-for-movies.git
-cd claude-for-movies/mcp-server && npm install
+git clone https://github.com/JCodesMore/movies-for-ai-agents.git
+cd movies-for-ai-agents/mcp-server && npm install
 cd ..
 claude --plugin-dir .
 ```
 
-Or skip `/claude-for-movies:setup` entirely by exporting your key as an environment variable:
+Or skip `/movies-for-ai-agents:setup` entirely by exporting your key as an environment variable:
 
 ```bash
 export TMDB_API_KEY="your_key_here"

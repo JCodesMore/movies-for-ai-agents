@@ -1,19 +1,19 @@
-# Contributing to claude-for-movies
+# Contributing to movies-for-ai-agents
 
 Thanks for your interest — contributions are welcome.
 
 ## Ways to contribute
 
-- **Report a bug:** open a [bug report](https://github.com/JCodesMore/claude-for-movies/issues/new?template=bug_report.md) with steps to reproduce.
-- **Request a feature:** describe the use-case first, implementation second. [Open a request](https://github.com/JCodesMore/claude-for-movies/issues/new?template=feature_request.md).
+- **Report a bug:** open a [bug report](https://github.com/JCodesMore/movies-for-ai-agents/issues/new?template=bug_report.md) with steps to reproduce.
+- **Request a feature:** describe the use-case first, implementation second. [Open a request](https://github.com/JCodesMore/movies-for-ai-agents/issues/new?template=feature_request.md).
 - **Submit a PR:** see below.
 - **Help another user:** jump into [Discord](https://discord.gg/babcVNJBet).
 
 ## Development setup
 
 ```bash
-git clone https://github.com/JCodesMore/claude-for-movies.git
-cd claude-for-movies/mcp-server
+git clone https://github.com/JCodesMore/movies-for-ai-agents.git
+cd movies-for-ai-agents/mcp-server
 npm install
 ```
 
@@ -25,7 +25,7 @@ From the project root:
 claude --plugin-dir .
 ```
 
-Inside Claude Code, run `/mcp` — you should see `claude-for-movies` listed with 18 tools.
+Inside Claude Code, run `/mcp` — you should see `movies-for-ai-agents` listed with 18 tools.
 
 ### Smoke-test the MCP server in isolation
 
@@ -33,7 +33,7 @@ Inside Claude Code, run `/mcp` — you should see `claude-for-movies` listed wit
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"manual","version":"1.0"}}}' | node mcp-server/index.js
 ```
 
-You should get a single JSON response with `serverInfo.name: "claude-for-movies"`.
+You should get a single JSON response with `serverInfo.name: "movies-for-ai-agents"`.
 
 ## Pull request checklist
 
