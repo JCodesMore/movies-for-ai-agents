@@ -8,17 +8,15 @@ Ask *"what should I watch tonight?"* and get picks that actually fit your taste.
 
 [![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/babcVNJBet)
 
-[Quick Start](#quick-start) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet) · [Demo](#demo)
+[Quick Start](#quick-start) · [Try it](#try-it) · [Discord](https://discord.gg/babcVNJBet)
+
+[![Watch the demo](https://img.youtube.com/vi/hX12xFf8-9I/maxresdefault.jpg)](https://youtu.be/hX12xFf8-9I)
+
+*Click to watch — 40-second demo.*
 
 </div>
 
 ---
-
-## Demo
-
-[![Watch the demo](https://img.youtube.com/vi/g4qwbu5H278/maxresdefault.jpg)](https://youtu.be/g4qwbu5H278)
-
-> Click the image to watch the 60-second walkthrough.
 
 ## Quick Start
 
@@ -42,25 +40,11 @@ Talk to Claude like a friend:
 - *"What should I watch tonight?"*
 - *"Find me that 90s movie about a hacker..."*
 - *"I just finished Arrival, absolutely loved it."* — auto-logs it, learns your taste
-- *"Something cerebral, under two hours."*
+- *"Add Weapons to my halloween list."* — custom themed lists, organized by mood
 - *"Sci-fi with an IMDb rating of 8 or higher from the 2010s."*
 - *"Hidden gems — highly rated but obscure."*
 
-The more you mention what you watch, the better it gets.
-
-## What's inside
-
-**Five smart skills** that activate based on what you say · **35 MCP tools** for search, discovery, ratings, lists, and your taste profile · **Your taste follows you** across every project, every machine
-
-| Skill | Triggers when you... |
-|---|---|
-| `setup` | first run, or when your API key isn't configured |
-| `find-movie` | ask *"find me that movie where..."* |
-| `discover-movies` | ask *"what's popular / trending / new in theaters?"* |
-| `recommend` | ask *"what should I watch?"* or describe a mood |
-| `movies-journal` | mention watching / finishing / loving / hating a movie — auto-logs it |
-
-**New in 0.2.0** — *custom named lists* (say *"add Weapons to my halloween list"*), *active viewing state* (when you say *"I'll watch X tonight"* Claude tracks it and asks how it went next time), and *IMDb-hyperlinked titles* in every suggestion.
+Tell Claude you'll watch something tonight, and next session it'll ask how it went. Your taste profile follows you across every project and every machine.
 
 ## Community
 
@@ -81,8 +65,6 @@ Everything stays on **your machine**, outside any one project folder:
 ├── imdb-cache.json       ← cached imdbapi.dev responses (24h/6h TTLs)
 └── imdb-interests.json   ← cached IMDb interest taxonomy (7d TTL)
 ```
-
-> Upgrading from 0.1.x? Your old `watchlist.json` migrates into `lists.json` automatically on first read.
 
 Your taste follows you across every project and every machine that shares this directory. No telemetry, no analytics — nothing leaves your machine except TMDB search queries.
 
